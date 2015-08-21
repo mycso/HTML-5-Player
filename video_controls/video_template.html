@@ -46,22 +46,6 @@
 	    display: block;
 	}
 
-	/*button#playMuteBtn{
-		background-image: url(images/bigunmuteButton.png);
-	    background-repeat: no-repeat;
-	    border: none;
-	    height: 120px;
-	    width: 120px;
-	    background-color: transparent;
-	    outline: none;
-	    cursor: pointer;
-	    float: left;
-	    display: block;
-	    position: absolute;
-	    top: 96px;
-	    left: 340px;
-	}*/
-
 	div#seekslider{
 	  height: 100px;
 	  display: flex;
@@ -73,7 +57,6 @@
 	  -moz-appearance: none;
 	  background: none;
 	  cursor: pointer;
-	  /*display: block;*/
 	  margin-top: 3px;
 	  height: 100%;
 	  overflow: hidden;
@@ -176,8 +159,6 @@
 	 	<source src="videos/kolor.webm" type="video/webm">
 	  	Your browser does not support the video tag.
 	</video>
-
-	<!-- <button id="playMuteBtn"></button> -->
 	
 	<div class="video_controls_bar">
 		<button id="playPauseBtn"></button>
@@ -204,15 +185,14 @@
 	var vid, playBtn, seekslider, currentTimeText, muteBtn;
 
 	function initializePlayer(){
+		
 		//Set object references 
 		vid = document.getElementById("myVideo");
 		playBtn = document.getElementById("playPauseBtn");
 		seekslider = document.getElementById("seekslider");
 		currentTimeText = document.getElementById("currentTimeText");
 		muteBtn = document.getElementById("muteBtn");
-		// playMuteBtn = document.getElementById("playMuteBtn");
 
-		// durationTimeText = document.getElementById("durationTimeText");
 		//Add event listeners
 		playBtn.addEventListener("click",playPause,false);
 		seekslider.addEventListener("change",vidSeek,false);
@@ -228,11 +208,9 @@
 		if(vid.paused){
 			vid.play();
 			playBtn.style.background = "url(images/pauseBtn.png)";
-			// playMuteBtn.style.background = "url(images/bigunmuteButton.png)";
 		} else {
 			vid.pause();
 			playBtn.style.background = "url(images/playBtn.png)";
-			// playMuteBtn.style.background = "none";
 		}
 	}
 
@@ -248,22 +226,16 @@
 		seekslider.value = newTime;
 		var currentmins = Math.floor(vid.currentTime / 60);
 		var currentsecs = Math.floor(vid.currentTime - currentmins * 60);
-		// var durationmins = Math.floor(vid.duration / 60);
-		// var durationsecs = Math.floor(vid.duration - durationmins * 60);
+		
 		if(currentsecs < 10){
 			currentsecs = "0"+currentsecs;
 		}
-		// if(durationsecs < 10){
-		// 	durationsecs = "0"+durationsecs;
-		// }
+		
 		if(currentmins < 10){
 			currentmins = "0"+currentmins;
 		}
-		// if(durationmins < 10){
-		// 	durationmins = "0"+durationmins;
-		// }
+
 		currentTimeText.innerHTML = currentmins+":"+currentsecs;
-		// durationTimeText.innerHTML = durationmins+":"+durationsecs;
 	}
 
 	function vidMute(){
