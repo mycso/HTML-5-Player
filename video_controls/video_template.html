@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<style type="text/css">
+	.video_player_container{
+		width:				768px;
+		background: 		transparent;
+	}
+
+	.video_controls_bar{
+		background: 		#000; 
+		position: 			absolute;
+		color:				#FFF;
+		font-family:		arial;
+		font-size: 			14px;
+		padding: 			10px;
+		width:				768px;
+		top: 				266px;
+		text-align: 		center;
+		z-index: 			10;    
+	}
+
+	button#playPauseBtn{
+		background-image: url(images/playBtn.png);
+	    background-repeat: no-repeat;
+	    border: none;
+	    height: 22px;
+	    width: 18px;
+	    background-color: transparent;
+	    outline: none;
+	    cursor: pointer;
+	    float: left;
+	    display: block;
+	}
+
+	button#muteBtn{
+		background-image: url(images/muteBtn.png);
+	    background-repeat: no-repeat;
+	    border: none;
+	    height: 22px;
+	    width: 18px;
+	    background-color: transparent;
+	    outline: none;
+	    cursor: pointer;
+	    display: block;
+	}
+
+	/*button#playMuteBtn{
+		background-image: url(images/bigunmuteButton.png);
+	    background-repeat: no-repeat;
+	    border: none;
+	    height: 120px;
+	    width: 120px;
+	    background-color: transparent;
+	    outline: none;
+	    cursor: pointer;
+	    float: left;
+	    display: block;
+	    position: absolute;
+	    top: 96px;
+	    left: 340px;
+	}*/
+
+	div#seekslider{
+	  height: 100px;
+	  display: flex;
+	  justify-content: center;
+	}
+
+	input[type='range'] {
+	  -webkit-appearance: none;
+	  -moz-appearance: none;
+	  background: none;
+	  cursor: pointer;
+	  /*display: block;*/
+	  margin-top: 3px;
+	  height: 100%;
+	  overflow: hidden;
+	  width: 80%;	
+	}
+
+	input[type='range']:focus {
+	  box-shadow: none;
+	  outline: none;
+	}
+
+	input[type='range']::-webkit-slider-runnable-track {
+	  -webkit-appearance: none;
+	  background: #666;
+	  height: 13px;
+	}
+
+	input[type='range']::-webkit-slider-thumb:before {
+	  position: absolute;
+	  top: 0;
+	  right: 50%;
+	  left: -700px;
+	  background: #bababa;
+	  content: '';
+	  height: 13px;
+	  pointer-events: none;
+	}
+
+	input[type='range']::-webkit-slider-thumb {
+	  width: 0;
+	  height: 0;
+	  -webkit-appearance: none;
+	  position: relative;
+	}
+
+	input[type='range']::-moz-range-track {
+	  width: 100%;
+	  height: 13px;
+	}
+
+	input[type='range']::-moz-range-thumb {
+	  width: 3px;
+	  height: 3px;
+	  -moz-appearance: none;
+	  background: transparent;
+	  border: 0;
+	  border-radius: 0;
+	  box-shadow: 0;
+	  position: relative;
+	}
+
+	input[type='range']::-moz-range-progress {
+	  background: #bababa;
+	  height: 13px;
+	}
+
+	input[type='range']::-ms-track {
+	  background: transparent;
+	  border: 0;
+	  border-color: transparent;
+	  border-radius: 0;
+	  border-width: 0;
+	  color: transparent;
+	  height: 3px;
+	  width: 70%;
+	}
+
+	input[type='range']::-ms-fill-lower {
+	  background: #bababa;
+	  border-radius: 0;
+	  height: 13px;
+	}
+
+	input[type='range']::-ms-fill-upper {
+	  background: #666;
+	  border-radius: 0;
+	  height: 13px;
+	}
+
+	input[type='range']::-ms-thumb {
+	  width: 0;
+	  height: 0;
+	  background: transparent;
+	}
+
+	input[type='range']::-ms-tooltip {
+	  display: none;
+	}
+
+	#muteBtn{
+		float: right;
+	}
+</style>
+</head>
+<body>
+
+<div class="video_player_container">
+	<video id="myVideo" width="768" height="300" loop>
+	  	<source src="videos/kolor.mp4" type="video/mp4">
+	 	<source src="videos/kolor.webm" type="video/webm">
+	  	Your browser does not support the video tag.
+	</video>
+
+	<!-- <button id="playMuteBtn"></button> -->
+	
+	<div class="video_controls_bar">
+		<button id="playPauseBtn"></button>
+		<input id="seekslider" type="range" min="0" max="100" value="0" step="1">
+		<span id="currentTimeText">00:00</span>
+		<button id="muteBtn"></button>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+    	$(".video_player_container .video_controls_bar").hide();
+    	$(".video_player_container").hover(
+	        function(){
+	            $(this).find(".video_controls_bar").fadeIn(5000);
+	        },
+	        function(){
+	            $(this).find(".video_controls_bar").delay(1000).fadeOut();
+	        });
+	});
+
+	var vid, playBtn, seekslider, currentTimeText, muteBtn;
+
+	function initializePlayer(){
+		//Set object references 
+		vid = document.getElementById("myVideo");
+		playBtn = document.getElementById("playPauseBtn");
+		seekslider = document.getElementById("seekslider");
+		currentTimeText = document.getElementById("currentTimeText");
+		muteBtn = document.getElementById("muteBtn");
+		// playMuteBtn = document.getElementById("playMuteBtn");
+
+		// durationTimeText = document.getElementById("durationTimeText");
+		//Add event listeners
+		playBtn.addEventListener("click",playPause,false);
+		seekslider.addEventListener("change",vidSeek,false);
+		vid.addEventListener("timeupdate",seektimeupdate,false);
+		muteBtn.addEventListener("click",vidMute,false);
+	}
+
+	
+	window.onload = initializePlayer;
+	
+	//pause and play button
+	function playPause(){
+		if(vid.paused){
+			vid.play();
+			playBtn.style.background = "url(images/pauseBtn.png)";
+			// playMuteBtn.style.background = "url(images/bigunmuteButton.png)";
+		} else {
+			vid.pause();
+			playBtn.style.background = "url(images/playBtn.png)";
+			// playMuteBtn.style.background = "none";
+		}
+	}
+
+	//seeking slider
+	function vidSeek(){
+		var seekto = vid.duration * (seekslider.value / 100);
+		vid.currentTime = seekto;
+	}
+
+	//time duration function
+	function seektimeupdate(){
+		var newTime = vid.currentTime * (100 / vid.duration);
+		seekslider.value = newTime;
+		var currentmins = Math.floor(vid.currentTime / 60);
+		var currentsecs = Math.floor(vid.currentTime - currentmins * 60);
+		// var durationmins = Math.floor(vid.duration / 60);
+		// var durationsecs = Math.floor(vid.duration - durationmins * 60);
+		if(currentsecs < 10){
+			currentsecs = "0"+currentsecs;
+		}
+		// if(durationsecs < 10){
+		// 	durationsecs = "0"+durationsecs;
+		// }
+		if(currentmins < 10){
+			currentmins = "0"+currentmins;
+		}
+		// if(durationmins < 10){
+		// 	durationmins = "0"+durationmins;
+		// }
+		currentTimeText.innerHTML = currentmins+":"+currentsecs;
+		// durationTimeText.innerHTML = durationmins+":"+durationsecs;
+	}
+
+	function vidMute(){
+		if(vid.muted){
+			vid.muted = false;
+			muteBtn.style.background = "url(images/muteBtn.png)";
+		} else {
+			vid.muted = true;
+			muteBtn.style.background = "url(images/unmuteBtn.png)";
+
+		}
+	}
+</script>
+</body>
+</html>
